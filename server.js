@@ -1,3 +1,4 @@
+// Require dependencies
 const express = require('express');
 const routes = require('./routes');
 
@@ -16,7 +17,7 @@ app.use(routes);
 // app.listen(PORT, () => {
 //   console.log(`App listening on port ${PORT}!`);
 // });
+
 sequelize.sync({ force: false }).then(() => {
-  app.listen(PORT, () => console.log('Complete! Server connection synced.'));
-}
-);
+  app.listen(PORT, () => console.log(`App listening on port 3001!`));
+});

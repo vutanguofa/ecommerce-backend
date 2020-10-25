@@ -1,45 +1,11 @@
+/*
+// Module lesson example
 const router = require('express').Router();
-const { Category, Product } = require('../../models');
-
-// The `/api/categories` endpoint
+const { Comment } = require('../../models');
 
 router.get('/', (req, res) => {
-  // find all categories
-  Category.findAll({
-    attributes: [
-      'id',
-      'category_name'
-    ],
-    // be sure to include its associated Products
-    include: [Product]
-  })
-    .then(dbData => res.json(dbData))
-    .catch(err => {
-      console.log(err);
-      res.status(500).json(err);
-    });
-});
-
-router.get('/:id', (req, res) => {
-  // find one category by its `id` value
-  Category.findOne({
-    attributes: [
-      'id',
-      'category_name'
-    ],
-    // be sure to include its associated Products
-    include: [Product],
-    where: {
-      id: req.params.id
-    }
-  })
-    .then(dbData => {
-      if (!dbData) {
-        res.status(404).json({ message: 'Find one category by its id value failed!' });
-        return;
-      }
-      res.json(dbData);
-    })
+  Comment.findAll()
+    .then(dbCommentData => res.json(dbCommentData))
     .catch(err => {
       console.log(err);
       res.status(500).json(err);
@@ -47,64 +13,137 @@ router.get('/:id', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  // create a new category
-  Category.create({
-    category_name: req.body.category_name
+  // expects => {comment_text: "This is the comment", user_id: 1, post_id: 2}
+  Comment.create({
+    comment_text: req.body.comment_text,
+    user_id: req.body.user_id,
+    post_id: req.body.post_id
   })
-    .then(dbData => res.json(dbData))
-    .then(console.log("New category added!"))
+    .then(dbCommentData => res.json(dbCommentData))
     .catch(err => {
       console.log(err);
-      res.status(500).json(err);
-    });
-});
-
-router.put('/:id', (req, res) => {
-  // update a category by its `id` value
-  Category.update(
-    {
-      category_name: req.body.category_name
-    },
-    {
-      where: {
-        id: req.params.id
-      }
-    }
-  )
-    // send back data from the database that has been modified
-    .then(dbData => {
-      if (!dbData) {
-        res.status(404).json({ message: 'Update a category by its id value failed!' });
-        return;
-      }
-      console.log("Update successful!");
-      res.json(dbData);
-    })
-    .catch(err => {
-      console.log(err);
-      res.status(500).json(err);
+      res.status(400).json(err);
     });
 });
 
 router.delete('/:id', (req, res) => {
-  // delete a category by its `id` value
-  Category.destroy({
+  Comment.destroy({
     where: {
       id: req.params.id
     }
   })
-    .then(dbData => {
-      if (!dbData) {
-        res.status(404).json({ message: 'Delete a category by its id value failed!' });
+    .then(dbCommentData => {
+      if (!dbCommentData) {
+        res.status(404).json({ message: 'No comment found with this id!' });
         return;
       }
-      console.log("Delete successful!");
-      res.json(dbData);
+      res.json(dbCommentData);
     })
     .catch(err => {
       console.log(err);
       res.status(500).json(err);
     });
+});
+
+module.exports = router;
+*/
+
+const router = require('express').Router();
+const { Category, Product } = require('../../models');
+
+// The `/api/categories` endpoint
+
+// find all categories
+// be sure to include its associated Products
+router.get('/', (req, res) => {
+  Category.findAll({
+    include: [Product]
+
+  })
+
+    .then(dbCategoryData => res.json(dbCategoryData))
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    });
+});
+
+// find one category by its `id` value
+// be sure to include its associated Products
+router.get('/:id', (req, res) => {
+  Category.findOne({
+    where: {
+      id: req.params.id
+    },
+    include: [Product]
+
+  })
+    .then(dbCategoryData => {
+      if (!dbCategoryData) {
+        res.status(404).json({ messsage: 'Find one category by its `id` value failed!' });
+        return;
+      }
+      console.log('Success!');
+      res.json(dbCategoryData);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    });
+});
+
+// create a new category
+router.post('/', (req, res) => {
+  Category.create(req.body)
+    .then(dbCategoryData => res.json(dbCategoryData))
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    });
+});
+
+// update a category by its `id` value
+router.put('/:id', (req, res) => {
+  Category.update(req.body, {
+    where: {
+      id: req.params.id
+    }
+  })
+    .then(dbCategoryData => {
+      if (!dbCategoryData) {
+        res.status(404).json({ message: 'Update a category by its `id` value failed!' });
+        return;
+      }
+      console.log('Success!');
+      res.json(dbCategoryData);
+    })
+    .catch(err => {
+      console.log(err);
+      res.json(500).json(err);
+    });
+});
+
+// delete a category by its `id` value
+router.delete('/:id', (req, res) => {
+  Category.destroy({
+    where: {
+      id: req.params.id
+    }
+
+  })
+    .then(dbCategoryData => {
+      if (!dbCategoryData) {
+        res.status(404).json({ message: 'Delete a category by its `id` value failed!' });
+        return;
+      }
+      console.log('Success!');
+      res.json(dbCategoryData);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    });
+
 });
 
 module.exports = router;

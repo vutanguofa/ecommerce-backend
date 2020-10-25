@@ -13,11 +13,11 @@ This repo includes an ecommerce backend where the user can view, add, update, or
 
 ## Assignment Details
 
-![]((https://user-images.githubusercontent.com/68674610/97108898-a63ac000-168d-11eb-9e5d-007bb696757f.png)
+![](https://user-images.githubusercontent.com/68674610/97108898-a63ac000-168d-11eb-9e5d-007bb696757f.png)
 
 ## Walkthrough
 
-[Link to YouTube walkthrough](https://www.youtube.com/watch?v=XZH3AS0b_UA&feature=youtu.be)
+[Link to YouTube walkthrough](https://youtu.be/sZ_PpmUgYGg)
 
 ## Link to deployed application
 

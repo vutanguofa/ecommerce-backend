@@ -1,3 +1,53 @@
+/*
+// Module lesson example
+const router = require('express').Router();
+const { Comment } = require('../../models');
+
+router.get('/', (req, res) => {
+  Comment.findAll()
+    .then(dbCommentData => res.json(dbCommentData))
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    });
+});
+
+router.post('/', (req, res) => {
+  // expects => {comment_text: "This is the comment", user_id: 1, post_id: 2}
+  Comment.create({
+    comment_text: req.body.comment_text,
+    user_id: req.body.user_id,
+    post_id: req.body.post_id
+  })
+    .then(dbCommentData => res.json(dbCommentData))
+    .catch(err => {
+      console.log(err);
+      res.status(400).json(err);
+    });
+});
+
+router.delete('/:id', (req, res) => {
+  Comment.destroy({
+    where: {
+      id: req.params.id
+    }
+  })
+    .then(dbCommentData => {
+      if (!dbCommentData) {
+        res.status(404).json({ message: 'No comment found with this id!' });
+        return;
+      }
+      res.json(dbCommentData);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    });
+});
+
+module.exports = router;
+*/
+
 const router = require('express').Router();
 const { Product, Category, Tag, ProductTag } = require('../../models');
 
@@ -8,19 +58,18 @@ router.get('/', (req, res) => {
   // find all products
   Product.findAll({
     // be sure to include its associated Category and Tag data
-    include: [
-      Category,
+    include: [Category,
       {
         model: Tag,
-        through: ProductTag,
-      },
-    ],
+        through: ProductTag
+      }]
   })
-    .then(dbData => res.json(dbData))
+    .then(dbProductData => res.json(dbProductData))
     .catch(err => {
       console.log(err);
       res.status(500).json(err);
     });
+
 });
 
 // get one product
@@ -28,19 +77,23 @@ router.get('/:id', (req, res) => {
   // find a single product by its `id`
   Product.findOne({
     where: {
-      id: req.params.id,
+      id: req.params.id
     },
     // be sure to include its associated Category and Tag data
-    include: [
-      Category,
+    include: [Category,
       {
         model: Tag,
-        through: ProductTag,
-      },
-    ],
+        through: ProductTag
+      }]
   })
-
-    .then(dbData => res.json(dbData))
+    .then(dbProductData => {
+      if (!dbProductData) {
+        res.status(404).json({ messsage: 'Find a single product by its `id` failed!' });
+        return;
+      }
+      console.log('Success!');
+      res.json(dbProductData);
+    })
     .catch(err => {
       console.log(err);
       res.status(500).json(err);
@@ -121,19 +174,25 @@ router.put('/:id', (req, res) => {
     });
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', (req, res) => {
   // delete one product by its `id` value
-  await ProductTag.destroy({
-    where: {
-      product_id: req.params.id
-    }
-  });
-  const result = await Product.destroy({
+  Product.destroy({
     where: {
       id: req.params.id
     }
   })
-  return res.json(result);
+    .then((dbProductData) => {
+      if (!dbProductData) {
+        res.status(404).json({ message: 'Delete one product by its `id` value failed!' });
+        return;
+      }
+      console.log('Success!');
+      res.json(dbProductData);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    });
 });
 
 module.exports = router;
